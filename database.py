@@ -159,6 +159,7 @@ class DataBase(object):
                             # записываем класс
                             if find_class:
                                 self.save_class(value=find_class.string)
+                                print(f'Класс {value} найден')
                                 read_days = True
             self.session.commit()
         else:
