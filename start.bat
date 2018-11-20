@@ -1,0 +1,1 @@
+.\virtualenv\Scripts\python.exe main.py

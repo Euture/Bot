@@ -1,0 +1,6 @@
+pip==18.1
+setuptools==40.6.2
+requests==2.20.1
+pysocks==1.6.8
+pyTelegramBotAPI==3.6.6
+openpyxl==2.5.10

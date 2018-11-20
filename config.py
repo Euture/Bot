@@ -1,0 +1,2 @@
+token = "713173058:AAFNE6861SWGMaUeyQuowZ7T6ALZr9DTs3s"
+max_lessons = 8
