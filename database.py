@@ -35,7 +35,7 @@ class Lesson(Base):
     day = Column(String)
 
     def __str__(self):
-        return f'{self.number} урок {self.text}'
+        return f'📌{self.number} урок\n{self.text}\n\n'
 
     def __init__(self, class_id, number, text, day):
         self._class = class_id
@@ -69,7 +69,8 @@ class DataBase(object):
     wednesday = 'Среда'
     friday = 'Пятница'
     saturday = 'Суббота'
-    week = [monday, tuesday, wednesday, friday, saturday]
+    sunday = 'Воскресенье'
+    week = [monday, tuesday, wednesday, friday, saturday, sunday]
 
     regex_class = None
     regex_empty = None
@@ -78,9 +79,7 @@ class DataBase(object):
         if clean and 'DB.sqlite' in os.listdir():
             os.remove('DB.sqlite')
         self.engine = create_engine(f'sqlite:///{project_dir}\\DB.sqlite', echo=echo)
-        session_factory = sessionmaker(bind=self.engine)
-        Session = scoped_session(session_factory)
-        self.session = Session()
+        self.session = scoped_session(sessionmaker(bind=self.engine))
         if clean:
             Base.metadata.create_all(self.engine)
 
@@ -103,7 +102,11 @@ class DataBase(object):
 
     def get_day_at_class(self, user_id, day=monday):
         user = self.get_user(id=user_id)
-        return self.session.query(Lesson).filter(_class=user._class.id, day=day)
+        result = f'📅 {day}\n\n'
+        lesssons = self.session.query(Lesson).filter(Lesson._class == user._class, Lesson.day == day)
+        for lesson in lesssons:
+            result += str(lesson)
+        return result
 
     def close(self):
         self.session.close()
@@ -143,7 +146,7 @@ class DataBase(object):
                     # записываем уроки
                     if read_days:
                         if value:
-                            self.save_lesson(number=lesson_count % max_lessons, value=value,
+                            self.save_lesson(number=(lesson_count % max_lessons) + 1, value=value,
                                              day=self.week[int(lesson_count / max_lessons)])
                         lesson_count += 1
                     else:
