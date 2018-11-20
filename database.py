@@ -67,10 +67,11 @@ class DataBase(object):
     monday = 'Понедельник'
     tuesday = 'Вторник'
     wednesday = 'Среда'
+    thursday = 'Четверг'
     friday = 'Пятница'
     saturday = 'Суббота'
     sunday = 'Воскресенье'
-    week = [monday, tuesday, wednesday, friday, saturday, sunday]
+    week = [monday, tuesday, wednesday, thursday, friday, saturday, sunday]
 
     regex_class = None
     regex_empty = None

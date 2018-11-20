@@ -1,4 +1,4 @@
-from database import DataBase, Class, User, Lesson
+from database import DataBase
 from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton
 import datetime
 
@@ -7,10 +7,11 @@ class Menu(object):
     monday = 'Понедельник'
     tuesday = 'Вторник'
     wednesday = 'Среда'
+    thursday = 'Четверг'
     friday = 'Пятница'
     saturday = 'Суббота'
     sunday = 'Воскресенье'
-    week = [monday, tuesday, wednesday, friday, saturday, sunday]
+    week = [monday, tuesday, wednesday, thursday, friday, saturday, sunday]
 
     @property
     def classes_markup(self):
