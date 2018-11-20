@@ -18,7 +18,7 @@ class Class(Base):
     postfix = Column(String)
 
     def __str__(self):
-        return f'{number} {postfix}'
+        return f'{self.number} {self.postfix}'
 
     def __init__(self, number, postfix):
         self.number = number
@@ -35,7 +35,7 @@ class Lesson(Base):
     day = Column(String)
 
     def __str__(self):
-        return f'{number} урок {text}'
+        return f'{self.number} урок {self.text}'
 
     def __init__(self, _class, number, text, day):
         self._class = _class.id

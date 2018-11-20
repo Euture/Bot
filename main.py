@@ -4,6 +4,7 @@ import time
 import subprocess
 import config
 from database import DataBase
+from menu import Menu
 
 tor = subprocess.Popen('start_tor.bat')
 time.sleep(10)
@@ -12,14 +13,15 @@ apihelper.proxy = {
 }
 bot = telebot.TeleBot(config.token)
 db = DataBase(echo=True)
-
+menu = Menu()
 
 # Обработчик команд '/start'
 @bot.message_handler(commands=['start'])
 def handle_start_help(message):
-    bot.send_message(message.chat.id, db.get_all_users() or 'Пусто')
-    db.save_user(id=message.from_user.id, _class=db.get_last_class())
-    bot.send_message(message.chat.id, db.get_all_users() or 'Пусто')
+    #if not db.get_user(id=message.from_user.id):
+    bot.send_message(message.chat.id, f'Привет, {message.from_user.first_name}!' + '\n' + 'Выбери класс',
+                     reply_markup=menu.classes_markup)
+    #db.save_user(id=message.from_user.id, _class=1)
 
 
 @bot.message_handler(func=lambda message: True, content_types=['text'])
