@@ -97,6 +97,10 @@ class DataBase(object):
             self.session.add(User(id=id, class_id=class_id))
             self.session.commit()
 
+    def delete_user(self, id):
+        user = self.get_user(id)
+        self.session.delete(user)
+
     def get_all_users(self):
         return list(self.session.query(User).all())
 

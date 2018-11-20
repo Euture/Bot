@@ -35,6 +35,25 @@ def handle_start(message):
         )
 
 
+# Обработчик команд '/reset'
+@bot.message_handler(commands=['reset'])
+def handle_reset(message):
+    user = db.get_user(id=message.from_user.id)
+    if not user:
+        bot.send_message(
+            message.chat.id,
+            f'Привет, {message.from_user.first_name}!' + '\n' + 'Выбери класс',
+            reply_markup=menu.classes_markup
+        )
+    if user:
+        db.delete_user(user.id)
+        bot.send_message(
+            message.chat.id,
+            f'Привет, {message.from_user.first_name}!' + '\n' + 'Выбери класс',
+            reply_markup=menu.classes_markup
+        )
+
+
 @bot.callback_query_handler(func=lambda call: True)
 def callback_inline(call):
     if call.message:
