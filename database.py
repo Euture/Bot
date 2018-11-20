@@ -5,7 +5,7 @@ from openpyxl import load_workbook
 from config import max_lessons, project_dir
 from sqlalchemy import Column, ForeignKey, Integer, String, create_engine, MetaData
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, scoped_session, sessionmaker
 
 Base = declarative_base()
 
@@ -37,8 +37,8 @@ class Lesson(Base):
     def __str__(self):
         return f'{self.number} урок {self.text}'
 
-    def __init__(self, _class, number, text, day):
-        self._class = _class.id
+    def __init__(self, class_id, number, text, day):
+        self._class = class_id
         self.number = number
         self.text = text
         self.day = day
@@ -53,9 +53,9 @@ class User(Base):
     def __str__(self):
         return f'ID={self.id} Class={self._class}'
 
-    def __init__(self, id, _class):
+    def __init__(self, id, class_id):
         self.id = id
-        self._class = _class.id
+        self._class = class_id
 
 
 class DataBase(object):
@@ -78,8 +78,9 @@ class DataBase(object):
         if clean and 'DB.sqlite' in os.listdir():
             os.remove('DB.sqlite')
         self.engine = create_engine(f'sqlite:///{project_dir}\\DB.sqlite', echo=echo)
-        self.session = Session(bind=self.engine)
-        self.connect = self.engine.connect()
+        session_factory = sessionmaker(bind=self.engine)
+        Session = scoped_session(session_factory)
+        self.session = Session()
         if clean:
             Base.metadata.create_all(self.engine)
 
@@ -89,19 +90,22 @@ class DataBase(object):
     def get_user(self, id):
         return self.session.query(User).filter_by(id=id).first()
 
-    def save_user(self, id, _class):
+    def get_class(self, id):
+        return self.session.query(Class).filter_by(id=id).first()
+
+    def save_user(self, id, class_id):
         if not self.get_user(id):
-            self.session.add(User(id=id, _class=_class))
+            self.session.add(User(id=id, class_id=class_id))
             self.session.commit()
 
     def get_all_users(self):
         return list(self.session.query(User).all())
 
-    def get_day_at_class(self, user, day=monday):
+    def get_day_at_class(self, user_id, day=monday):
+        user = self.get_user(id=user_id)
         return self.session.query(Lesson).filter(_class=user._class.id, day=day)
 
     def close(self):
-
         self.session.close()
 
     def string_filter(self, value):
@@ -121,7 +125,7 @@ class DataBase(object):
     def save_lesson(self, number, value, day):
         _class = self.get_last_class()
         value = self.string_filter(value)
-        self.session.add(Lesson(_class=_class, number=number, text=value, day=day))
+        self.session.add(Lesson(class_id=_class.id, number=number, text=value, day=day))
 
     def import_timetable(self):
         regex = re.compile(r'.xls')
