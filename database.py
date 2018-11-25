@@ -111,6 +111,8 @@ class DataBase(object):
         lesssons = self.session.query(Lesson).filter(Lesson._class == user._class, Lesson.day == day)
         for lesson in lesssons:
             result += str(lesson)
+        if not result:
+            return "Сегодня выходной!"
         return result
 
     def close(self):
